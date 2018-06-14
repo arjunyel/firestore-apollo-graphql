@@ -1,0 +1,20 @@
+{
+    "name": "functions",
+    "scripts": {
+        "build": "tsc",
+        "serve": "npm run build && node lib/index.js",
+        "start": "node lib/index.js",
+        "deploy": "npm run build && gcloud app deploy"
+    },
+    "main": "lib/index.js",
+    "dependencies": {
+        "apollo-server": "^2.0.0-beta.10",
+        "firebase-admin": "^5.12.1",
+        "graphql": "^0.13.2",
+        "graphql-tag": "^2.9.2"
+    },
+    "devDependencies": {
+        "tslint": "^5.10.0",
+        "typescript": "^2.9.1"
+    }
+}
