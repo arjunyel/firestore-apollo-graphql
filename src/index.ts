@@ -17,9 +17,8 @@ interface User {
 
 interface Tweet {
   id: string;
-  name: string;
-  screenName: string;
-  statusesCount: number;
+  likes: number;
+  text: string;
   userId: string;
 }
 
@@ -49,6 +48,27 @@ const typeDefs = gql`
 `;
 
 const resolvers = {
+  Query: {
+    async tweets() {
+      const tweets = await admin
+        .firestore()
+        .collection('tweets')
+        .get();
+      return tweets.docs.map(tweet => tweet.data()) as Tweet[];
+    },
+    async user(_: null, args: { id: string }) {
+      try {
+        const userDoc = await admin
+          .firestore()
+          .doc(`users/${args.id}`)
+          .get();
+        const user = userDoc.data() as User | undefined;
+        return user || new ValidationError('User ID not found');
+      } catch (error) {
+        throw new ApolloError(error);
+      }
+    }
+  },
   User: {
     async tweets(user) {
       try {
@@ -71,27 +91,6 @@ const resolvers = {
           .doc(`users/${tweet.userId}`)
           .get();
         return tweetAuthor.data() as User;
-      } catch (error) {
-        throw new ApolloError(error);
-      }
-    }
-  },
-  Query: {
-    async tweets() {
-      const tweets = await admin
-        .firestore()
-        .collection('tweets')
-        .get();
-      return tweets.docs.map(tweet => tweet.data()) as Tweet[];
-    },
-    async user(_: null, args: { id: string }) {
-      try {
-        const userDoc = await admin
-          .firestore()
-          .doc(`users/${args.id}`)
-          .get();
-        const user = userDoc.data() as User | undefined;
-        return user || new ValidationError('User ID not found');
       } catch (error) {
         throw new ApolloError(error);
       }
