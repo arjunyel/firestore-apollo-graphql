@@ -199,7 +199,7 @@ Take getting all the tweets a user has made as an example. You can see in our re
 
 ### Apollo Server
 
-Finally we setup our Apollo server
+Finally we setup our Apollo server, to work on App Engine we need to grab the port from the enviroment variables
 
 ```typescript
 const server = new ApolloServer({
@@ -208,7 +208,7 @@ const server = new ApolloServer({
   introspection: true
 });
 
-server.listen().then(({ url }) => {
+server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
 ```
