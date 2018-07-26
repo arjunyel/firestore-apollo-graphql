@@ -44,6 +44,7 @@ const typeDefs = gql`
   type Query {
     tweets: [Tweets]
     user(id: String!): User
+    users: [User]
   }
 `;
 
@@ -67,6 +68,13 @@ const resolvers = {
       } catch (error) {
         throw new ApolloError(error);
       }
+    },
+    async users() {
+      const users = await admin
+        .firestore()
+        .collection('users')
+        .get();
+      return users.docs.map(user => user.data()) as User[];
     }
   },
   User: {
