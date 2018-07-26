@@ -29,11 +29,11 @@ const typeDefs = gql`
     name: String!
     screenName: String!
     statusesCount: Int!
-    tweets: [Tweets]!
+    tweets: [Tweet]!
   }
 
   # A Tweet Object
-  type Tweets {
+  type Tweet {
     id: ID!
     text: String!
     userId: String!
@@ -42,8 +42,9 @@ const typeDefs = gql`
   }
 
   type Query {
-    tweets: [Tweets]
+    tweets: [Tweet]
     user(id: String!): User
+    users: [User]
   }
 `;
 
@@ -67,6 +68,13 @@ const resolvers = {
       } catch (error) {
         throw new ApolloError(error);
       }
+    },
+    async users() {
+      const users = await admin
+        .firestore()
+        .collection('users')
+        .get();
+      return users.docs.map(user => user.data()) as User[];
     }
   },
   User: {
@@ -83,7 +91,7 @@ const resolvers = {
       }
     }
   },
-  Tweets: {
+  Tweet: {
     async user(tweet) {
       try {
         const tweetAuthor = await admin
